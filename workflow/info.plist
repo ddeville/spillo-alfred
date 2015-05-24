@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>bundleid</key>
+	<string>com.ddeville.spillo.alfred</string>
+	<key>category</key>
+	<string>Productivity</string>
+	<key>connections</key>
+	<dict>
+		<key>6C68D0BB-A89A-4FDD-BB99-B5A5B460646E</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>0EB96C1E-0FCD-4072-BA49-18885F489BE2</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>47697E2F-6FD5-4B01-8C78-E2E1E5596CAE</string>
+				<key>modifiers</key>
+				<integer>524288</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+			</dict>
+		</array>
+	</dict>
+	<key>createdby</key>
+	<string>Bananafish Software</string>
+	<key>description</key>
+	<string>Search your bookmarks in Spillo</string>
+	<key>disabled</key>
+	<false/>
+	<key>name</key>
+	<string>Search Bookmarks in Spillo</string>
+	<key>objects</key>
+	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>plusspaces</key>
+				<false/>
+				<key>url</key>
+				<string>{query}</string>
+				<key>utf8</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.openurl</string>
+			<key>uid</key>
+			<string>0EB96C1E-0FCD-4072-BA49-18885F489BE2</string>
+			<key>version</key>
+			<integer>0</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
+				<integer>0</integer>
+				<key>escaping</key>
+				<integer>68</integer>
+				<key>keyword</key>
+				<string>spl</string>
+				<key>queuedelaycustom</key>
+				<integer>3</integer>
+				<key>queuedelayimmediatelyinitially</key>
+				<false/>
+				<key>queuedelaymode</key>
+				<integer>0</integer>
+				<key>queuemode</key>
+				<integer>1</integer>
+				<key>runningsubtext</key>
+				<string>Please wait, currently searching in Spillo…</string>
+				<key>script</key>
+				<string>import os, subprocess, sys
+
+script = os.path.join(os.path.dirname(os.path.realpath('__file__')), 'spillo.py')
+output = subprocess.check_output([script, '--service', 'alfred', '--query', "{query}"])
+
+sys.stdout.write(output)</string>
+				<key>subtext</key>
+				<string>Enter a query to search bookmarks in Spillo</string>
+				<key>title</key>
+				<string>Search in Spillo</string>
+				<key>type</key>
+				<integer>3</integer>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.scriptfilter</string>
+			<key>uid</key>
+			<string>6C68D0BB-A89A-4FDD-BB99-B5A5B460646E</string>
+			<key>version</key>
+			<integer>0</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>68</integer>
+				<key>script</key>
+				<string>import subprocess
+from Foundation import NSURL
+from AppKit import NSWorkspace
+
+default_browser_path = NSWorkspace.sharedWorkspace().URLForApplicationToOpenURL_(NSURL.URLWithString_('http://google.com')).path()
+
+subprocess.check_output(['open', '-a', default_browser_path, '--background', '{query}'])
+</string>
+				<key>type</key>
+				<integer>3</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>47697E2F-6FD5-4B01-8C78-E2E1E5596CAE</string>
+			<key>version</key>
+			<integer>0</integer>
+		</dict>
+	</array>
+	<key>readme</key>
+	<string></string>
+	<key>uidata</key>
+	<dict>
+		<key>0EB96C1E-0FCD-4072-BA49-18885F489BE2</key>
+		<dict>
+			<key>ypos</key>
+			<real>10</real>
+		</dict>
+		<key>47697E2F-6FD5-4B01-8C78-E2E1E5596CAE</key>
+		<dict>
+			<key>ypos</key>
+			<real>130</real>
+		</dict>
+		<key>6C68D0BB-A89A-4FDD-BB99-B5A5B460646E</key>
+		<dict>
+			<key>ypos</key>
+			<real>60</real>
+		</dict>
+	</dict>
+	<key>webaddress</key>
+	<string>http://bananafishsoftware.com/products/spillo</string>
+</dict>
+</plist>
