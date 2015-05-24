@@ -34,3 +34,7 @@ spl -n nullability -t objc swift
 ## Actions
 
 When you have found the bookmark you are looking for, you can open it in your default browser. Just hit Return or click on the bookmark in the Alfred search results. Alternatively, you can open the bookmark in the background by holding the option key.
+
+## Notes
+
+Note that Spillo need to be installed and authenticated on your machine for the workflow to work.
