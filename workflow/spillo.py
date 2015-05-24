@@ -121,7 +121,7 @@ class SpilloDatabase(object):
                 tag_queries.append('SELECT ZTITLE, ZURL, ZDATE FROM ZPINBOARDPOST WHERE Z_PK IN (SELECT Z_2POSTS FROM Z_2TAGS WHERE Z_3TAGS IN  (SELECT Z_PK FROM ZPINBOARDTAG WHERE ZTITLE == \"'+tag+'\"))')
             queries.append(' INTERSECT '.join(tag_queries))
 
-        sql = ' UNION '.join(queries) + ' ORDER BY ZDATE DESC'
+        sql = ' INTERSECT '.join(queries) + ' ORDER BY ZDATE DESC'
         cursor.execute(sql, params)
         return cursor.fetchall()
 
