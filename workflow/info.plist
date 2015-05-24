@@ -20,6 +20,14 @@
 			</dict>
 			<dict>
 				<key>destinationuid</key>
+				<string>DA1739EB-62FF-4F27-BA0E-1BFBDC136AC2</string>
+				<key>modifiers</key>
+				<integer>1048576</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
 				<string>47697E2F-6FD5-4B01-8C78-E2E1E5596CAE</string>
 				<key>modifiers</key>
 				<integer>524288</integer>
@@ -100,6 +108,23 @@ sys.stdout.write(output)</string>
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>plusspaces</key>
+				<false/>
+				<key>url</key>
+				<string>spillo:///view_post?url={query}</string>
+				<key>utf8</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.openurl</string>
+			<key>uid</key>
+			<string>DA1739EB-62FF-4F27-BA0E-1BFBDC136AC2</string>
+			<key>version</key>
+			<integer>0</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>concurrently</key>
 				<false/>
 				<key>escaping</key>
@@ -136,12 +161,17 @@ subprocess.check_output(['open', '-a', default_browser_path, '--background', '{q
 		<key>47697E2F-6FD5-4B01-8C78-E2E1E5596CAE</key>
 		<dict>
 			<key>ypos</key>
-			<real>130</real>
+			<real>250</real>
 		</dict>
 		<key>6C68D0BB-A89A-4FDD-BB99-B5A5B460646E</key>
 		<dict>
 			<key>ypos</key>
 			<real>60</real>
+		</dict>
+		<key>DA1739EB-62FF-4F27-BA0E-1BFBDC136AC2</key>
+		<dict>
+			<key>ypos</key>
+			<real>130</real>
 		</dict>
 	</dict>
 	<key>webaddress</key>
