@@ -1,6 +1,6 @@
 # Spillo for Alfred
 
-An Alfred workflow that lets you search your bookmarks in Spillo.
+An Alfred workflow that lets you search your bookmarks in [Spillo](http://bananafishsoftware.com/products/spillo).
 
 ## Usage
 
