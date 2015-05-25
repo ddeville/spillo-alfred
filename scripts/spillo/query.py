@@ -23,10 +23,10 @@ class Query(object):
     def _parse_query_string(self, query_string):
         parser = _QueryParser()
         parser.add_argument('value', nargs='*')
-        parser.add_argument('-n','--name', nargs='+', dest='name')
-        parser.add_argument('-u','--url', nargs='+', dest='url')
-        parser.add_argument('-d','--desc', nargs='+', dest='desc')
-        parser.add_argument('-t','--tags', nargs='+', dest='tags')
+        parser.add_argument('-n', '--name', nargs='+', dest='name')
+        parser.add_argument('-u', '--url', nargs='+', dest='url')
+        parser.add_argument('-d', '--desc', nargs='+', dest='desc')
+        parser.add_argument('-t', '--tags', nargs='+', dest='tags')
 
         args = vars(parser.parse_args(query_string.split()))
 

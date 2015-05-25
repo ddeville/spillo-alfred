@@ -44,27 +44,49 @@ class Database(object):
             pass
         return path
 
+    # the name is like the search term
+    NAME_QUERY = 'SELECT ZTITLE, ZURL, ZIDENTIFIER, ZDATE FROM ZPINBOARDPOST WHERE ZDELETING=0 AND ZTITLE LIKE ? COLLATE NOCASE'
+    # the url is like the search term
+    URL_QUERY = 'SELECT ZTITLE, ZURL, ZIDENTIFIER, ZDATE FROM ZPINBOARDPOST WHERE ZDELETING=0 AND ZURL LIKE ? COLLATE NOCASE'
+    # the desc is like the search term
+    DESC_QUERY = 'SELECT ZTITLE, ZURL, ZIDENTIFIER, ZDATE FROM ZPINBOARDPOST WHERE ZDELETING=0 AND ZDESC LIKE ? COLLATE NOCASE'
+    # the tag is exactly the search term
+    TAG_QUERY = 'SELECT ZTITLE, ZURL, ZIDENTIFIER, ZDATE FROM ZPINBOARDPOST WHERE ZDELETING=0 AND Z_PK IN (SELECT Z_2POSTS FROM Z_2TAGS WHERE Z_3TAGS == (SELECT Z_PK FROM ZPINBOARDTAG WHERE ZTITLE == ? COLLATE NOCASE))'
+    # the name or url or desc is like the search term or the tag is exactly the search term
+    FULL_QUERY = 'SELECT ZTITLE, ZURL, ZIDENTIFIER, ZDATE FROM ZPINBOARDPOST WHERE ZDELETING=0 AND (ZTITLE LIKE ? OR ZURL LIKE ? OR ZDESC LIKE ? OR Z_PK IN (SELECT Z_2POSTS FROM Z_2TAGS WHERE Z_3TAGS == (SELECT Z_PK FROM ZPINBOARDTAG WHERE ZTITLE == ? COLLATE NOCASE))) COLLATE NOCASE'
+
     def _query_general(self, cursor, query):
-        params = {"t": '%'+query+'%'}
-        cursor.execute('SELECT ZTITLE, ZURL, ZIDENTIFIER, ZDATE FROM ZPINBOARDPOST WHERE ZDELETING=0 AND (ZTITLE LIKE :t OR ZURL LIKE :t) COLLATE NOCASE ORDER BY ZDATE DESC', params)
+        # construct a LIKE search for each word in the query and intersect the queries
+        queries = []
+        params = []
+        for word in query.split():
+            queries.append(Database.FULL_QUERY)
+            params.append('%'+word+'%') # name
+            params.append('%'+word+'%') # url
+            params.append('%'+word+'%') # desc
+            params.append(word)         # tag
+        sql = ' INTERSECT '.join(queries) + ' ORDER BY ZDATE DESC'
+        cursor.execute(sql, params)
         return self._generate_bookmarks(cursor)
 
     def _query_specific(self, cursor, query):
         queries = []
-        params = {}
+        params = []
         if query.name:
-            queries.append('SELECT ZTITLE, ZURL, ZIDENTIFIER, ZDATE FROM ZPINBOARDPOST WHERE ZDELETING=0 AND ZTITLE LIKE :t COLLATE NOCASE')
-            params["t"] = '%'+query.name+'%'
+            queries.append(Database.NAME_QUERY)
+            params.append('%'+query.name+'%')
         if query.url:
-            queries.append('SELECT ZTITLE, ZURL, ZIDENTIFIER, ZDATE FROM ZPINBOARDPOST WHERE ZDELETING=0 AND ZURL LIKE :u COLLATE NOCASE')
-            params["u"] = '%'+query.url+'%'
+            queries.append(Database.URL_QUERY)
+            params.append('%'+query.url+'%')
         if query.desc:
-            queries.append('SELECT ZTITLE, ZURL, ZIDENTIFIER, ZDATE FROM ZPINBOARDPOST WHERE ZDELETING=0 AND ZDESC LIKE :d COLLATE NOCASE')
-            params["d"] = '%'+query.desc+'%'
+            queries.append(Database.DESC_QUERY)
+            params.append('%'+query.desc+'%')
         if query.tags:
+            # construct an intersection of queries for each tag
             tag_queries = []
             for tag in query.tags:
-                tag_queries.append('SELECT ZTITLE, ZURL, ZIDENTIFIER, ZDATE FROM ZPINBOARDPOST WHERE Z_PK IN (SELECT Z_2POSTS FROM Z_2TAGS WHERE Z_3TAGS == (SELECT Z_PK FROM ZPINBOARDTAG WHERE ZTITLE == \"'+tag+'\" COLLATE NOCASE))')
+                tag_queries.append(Database.TAG_QUERY)
+                params.append(tag)
             queries.append(' INTERSECT '.join(tag_queries))
 
         sql = ' INTERSECT '.join(queries) + ' ORDER BY ZDATE DESC'
