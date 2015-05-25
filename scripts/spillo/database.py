@@ -1,6 +1,6 @@
 import os, sqlite3
 
-from query import Query
+from query import QueryGlobal, QuerySpecific
 from bookmark import Bookmark
 
 from Foundation import (
@@ -21,10 +21,12 @@ class Database(object):
     def query(self, query):
         try:
             cursor = self.connection.cursor()
-            if query.value:
-                return self._query_general(cursor, query.value)
-            else:
+            if isinstance(query, QueryGlobal):
+                return self._query_global(cursor, query)
+            elif isinstance(query, QuerySpecific):
                 return self._query_specific(cursor, query)
+            else:
+                raise Database.DatabaseException('Unexpected query type')
         except sqlite3.OperationalError:
             raise Database.DatabaseException('There was an unknown error while querying the database')
 
@@ -44,6 +46,27 @@ class Database(object):
             pass
         return path
 
+    # the name or url or desc is like the search term or the tag is exactly the search term
+    GLOBAL_QUERY = 'SELECT ZTITLE, ZURL, ZIDENTIFIER, ZDATE FROM ZPINBOARDPOST WHERE ZDELETING=0 AND (ZTITLE LIKE ? OR ZURL LIKE ? OR ZDESC LIKE ? OR Z_PK IN (SELECT Z_2POSTS FROM Z_2TAGS WHERE Z_3TAGS == (SELECT Z_PK FROM ZPINBOARDTAG WHERE ZTITLE == ? COLLATE NOCASE))) COLLATE NOCASE'
+
+    def _query_global(self, cursor, query):
+        # construct a search for each word in the query and intersect the queries
+        queries = []
+        params = []
+        for word in query.value.split():
+            queries.append(Database.GLOBAL_QUERY)
+            params.append('%'+word+'%') # name
+            params.append('%'+word+'%') # url
+            params.append('%'+word+'%') # desc
+            params.append(word)         # tag
+
+        if not queries:
+            return None
+
+        sql = ' INTERSECT '.join(queries) + ' ORDER BY ZDATE DESC'
+        cursor.execute(sql, params)
+        return self._generate_bookmarks(cursor)
+
     # the name is like the search term
     NAME_QUERY = 'SELECT ZTITLE, ZURL, ZIDENTIFIER, ZDATE FROM ZPINBOARDPOST WHERE ZDELETING=0 AND ZTITLE LIKE ? COLLATE NOCASE'
     # the url is like the search term
@@ -52,22 +75,10 @@ class Database(object):
     DESC_QUERY = 'SELECT ZTITLE, ZURL, ZIDENTIFIER, ZDATE FROM ZPINBOARDPOST WHERE ZDELETING=0 AND ZDESC LIKE ? COLLATE NOCASE'
     # the tag is exactly the search term
     TAG_QUERY = 'SELECT ZTITLE, ZURL, ZIDENTIFIER, ZDATE FROM ZPINBOARDPOST WHERE ZDELETING=0 AND Z_PK IN (SELECT Z_2POSTS FROM Z_2TAGS WHERE Z_3TAGS == (SELECT Z_PK FROM ZPINBOARDTAG WHERE ZTITLE == ? COLLATE NOCASE))'
-    # the name or url or desc is like the search term or the tag is exactly the search term
-    FULL_QUERY = 'SELECT ZTITLE, ZURL, ZIDENTIFIER, ZDATE FROM ZPINBOARDPOST WHERE ZDELETING=0 AND (ZTITLE LIKE ? OR ZURL LIKE ? OR ZDESC LIKE ? OR Z_PK IN (SELECT Z_2POSTS FROM Z_2TAGS WHERE Z_3TAGS == (SELECT Z_PK FROM ZPINBOARDTAG WHERE ZTITLE == ? COLLATE NOCASE))) COLLATE NOCASE'
-
-    def _query_general(self, cursor, query):
-        # construct a search for each word in the query and intersect the queries
-        queries = []
-        params = []
-        for word in query.split():
-            queries.append(Database.FULL_QUERY)
-            params.append('%'+word+'%') # name
-            params.append('%'+word+'%') # url
-            params.append('%'+word+'%') # desc
-            params.append(word)         # tag
-        sql = ' INTERSECT '.join(queries) + ' ORDER BY ZDATE DESC'
-        cursor.execute(sql, params)
-        return self._generate_bookmarks(cursor)
+    # the unread status is 1 or 0
+    UNREAD_QUERY = 'SELECT ZTITLE, ZURL, ZIDENTIFIER, ZDATE FROM ZPINBOARDPOST WHERE ZDELETING=0 AND ZUNREAD == ?'
+    # the public status is 1 or 0
+    PUBLIC_QUERY = 'SELECT ZTITLE, ZURL, ZIDENTIFIER, ZDATE FROM ZPINBOARDPOST WHERE ZDELETING=0 AND ZSHARED == ?'
 
     def _query_specific(self, cursor, query):
         queries = []
@@ -93,6 +104,17 @@ class Database(object):
                 tag_queries.append(Database.TAG_QUERY)
                 params.append(tag)
             queries.append(' INTERSECT '.join(tag_queries))
+
+        if query.unread:
+            queries.append(Database.UNREAD_QUERY)
+            params.append(query.unread)
+
+        if query.public:
+            queries.append(Database.PUBLIC_QUERY)
+            params.append(query.public)
+
+        if not queries:
+            return None
 
         sql = ' INTERSECT '.join(queries) + ' ORDER BY ZDATE DESC'
         cursor.execute(sql, params)

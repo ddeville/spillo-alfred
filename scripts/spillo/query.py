@@ -1,28 +1,63 @@
 import argparse, sys
 
+def parse_query(query_string):
+    parser = _QueryParser()
+
+    parser.add_argument('value', nargs='*')
+    parser.add_argument('-n', '--name', nargs='+', dest='name')
+    parser.add_argument('-u', '--url', nargs='+', dest='url')
+    parser.add_argument('-d', '--desc', nargs='+', dest='desc')
+    parser.add_argument('-t', '--tags', nargs='+', dest='tags')
+    parser.add_argument('-un', '--unread', nargs='?', dest='unread')
+    parser.add_argument('-p', '--public', nargs='?', dest='public')
+
+    # try to parse the arguments, if an exception is thrown it's because some args
+    # are incomplete and we shouldn't return any result until they are
+    try:
+        args = vars(parser.parse_args(query_string.split()))
+    except:
+        raise QueryException()
+
+    if args['value']:
+        return QueryGlobal(' '.join(args['value']))
+
+    name = ' '.join(args['name']) if args['name'] else None
+    url = ' '.join(args['url']) if args['url'] else None
+    desc = ' '.join(args['desc']) if args['desc'] else None
+    tags = args['tags']
+    unread = args['unread']
+    public = args['public']
+
+    return QuerySpecific(name, url, desc, tags, unread, public)
+
 class Query(object):
-    class QueryException(Exception):
-        pass
+    pass
 
-    QueryException = QueryException
-
+class QueryGlobal(Query):
     _value = None
-    _name = None
-    _url = None
-    _tags = None
-    _desc = None
 
-    def __init__(self, query_string):
-        # try to parse the arguments, if an exception is thrown it's because some args
-        # are incomplete and we shouldn't return any result until they are
-        try:
-            specific = self._parse_query_string(query_string)
-        except:
-            raise Query.QueryException()
+    def __init__(self, value):
+        self._value = value
 
     @property
     def value(self):
         return self._value
+
+class QuerySpecific(Query):
+    _name = None
+    _url = None
+    _desc = None
+    _tags = None
+    _unread = None
+    _public = None
+
+    def __init__(self, name, url, desc, tags, unread, public):
+        self._name = name
+        self._url = url
+        self._desc = desc
+        self._tags = tags
+        self._unread = unread
+        self._public = public
 
     @property
     def name(self):
@@ -33,28 +68,24 @@ class Query(object):
         return self._url
 
     @property
+    def desc(self):
+        return self._desc
+
+    @property
     def tags(self):
         return self._tags
 
     @property
-    def desc(self):
-        return self._desc
+    def unread(self):
+        return self._unread
 
-    def _parse_query_string(self, query_string):
-        parser = _QueryParser()
-        parser.add_argument('value', nargs='*')
-        parser.add_argument('-n', '--name', nargs='+', dest='name')
-        parser.add_argument('-u', '--url', nargs='+', dest='url')
-        parser.add_argument('-d', '--desc', nargs='+', dest='desc')
-        parser.add_argument('-t', '--tags', nargs='+', dest='tags')
+    @property
+    def public(self):
+        return self._public
 
-        args = vars(parser.parse_args(query_string.split()))
 
-        self._value = ' '.join(args['value']) if args['value'] else None
-        self._name = ' '.join(args['name']) if args['name'] else None
-        self._url = ' '.join(args['url']) if args['url'] else None
-        self._desc = ' '.join(args['desc']) if args['desc'] else None
-        self._tags = args['tags']
+class QueryException(Exception):
+    pass
 
 class _QueryParser(argparse.ArgumentParser):
     def _get_action_from_name(self, name):
