@@ -56,7 +56,7 @@ class Database(object):
     FULL_QUERY = 'SELECT ZTITLE, ZURL, ZIDENTIFIER, ZDATE FROM ZPINBOARDPOST WHERE ZDELETING=0 AND (ZTITLE LIKE ? OR ZURL LIKE ? OR ZDESC LIKE ? OR Z_PK IN (SELECT Z_2POSTS FROM Z_2TAGS WHERE Z_3TAGS == (SELECT Z_PK FROM ZPINBOARDTAG WHERE ZTITLE == ? COLLATE NOCASE))) COLLATE NOCASE'
 
     def _query_general(self, cursor, query):
-        # construct a LIKE search for each word in the query and intersect the queries
+        # construct a search for each word in the query and intersect the queries
         queries = []
         params = []
         for word in query.split():
@@ -72,15 +72,20 @@ class Database(object):
     def _query_specific(self, cursor, query):
         queries = []
         params = []
+
+        def create_and_add_query(sql, term):
+            # construct a query for each word in the search term
+            for word in term.split():
+                queries.append(sql)
+                params.append('%'+term+'%')
+
         if query.name:
-            queries.append(Database.NAME_QUERY)
-            params.append('%'+query.name+'%')
+            create_and_add_query(Database.NAME_QUERY, query.name)
         if query.url:
-            queries.append(Database.URL_QUERY)
-            params.append('%'+query.url+'%')
+            create_and_add_query(Database.URL_QUERY, query.url)
         if query.desc:
-            queries.append(Database.DESC_QUERY)
-            params.append('%'+query.desc+'%')
+            create_and_add_query(Database.DESC_QUERY, query.desc)
+
         if query.tags:
             # construct an intersection of queries for each tag
             tag_queries = []
