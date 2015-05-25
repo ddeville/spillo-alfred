@@ -20,7 +20,7 @@ spl objective-c atomics
 
 ### Specific
 
-If you want more control, you can specify various parameters for your search. The following parameters are supported:
+If you want more control, you can specify various parameters in your search. The following parameters are supported:
 
 - `-n`: The name of the bookmark
 - `-u`: The URL of the bookmark
@@ -43,4 +43,4 @@ You can also open the bookmark in Spillo by holding the command key.
 
 ## Notes
 
-Note that Spillo need to be installed and authenticated on your machine for the workflow to work.
+Note that Spillo needs to be installed and authenticated on your machine for the workflow to work.
