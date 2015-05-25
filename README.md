@@ -2,6 +2,8 @@
 
 An Alfred workflow that lets you search your bookmarks in [Spillo](http://bananafishsoftware.com/products/spillo).
 
+You can download the latest version of the workflow from [here](https://github.com/ddeville/spillo-alfred/releases/latest) or from [Packal](http://www.packal.org/workflow/spillo).
+
 ## Usage
 
 You can invoke the workflow by using the `spl` command in Alfred.
