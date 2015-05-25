@@ -7,7 +7,7 @@ from service.cli import CLIEmitter
 
 from spillo.bookmark import Bookmark
 from spillo.database import Database
-from spillo.query import parse_query, QueryException
+from spillo.query import Query, QueryException
 
 def main(argv):
     def _emit(output):
@@ -33,7 +33,7 @@ def main(argv):
 
     # parse the query and emit an empty response if there is none
     try:
-        query = parse_query(q)
+        query = Query.parse_query(q)
     except QueryException:
         _emit_message_and_exit(emitter.generate_empty(), 0)
 

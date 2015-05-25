@@ -1,37 +1,57 @@
 import argparse, sys
 
-def parse_query(query_string):
-    parser = _QueryParser()
-
-    parser.add_argument('value', nargs='*')
-    parser.add_argument('-n', '--name', nargs='+', dest='name')
-    parser.add_argument('-u', '--url', nargs='+', dest='url')
-    parser.add_argument('-d', '--desc', nargs='+', dest='desc')
-    parser.add_argument('-t', '--tags', nargs='+', dest='tags')
-    parser.add_argument('-un', '--unread', nargs='?', dest='unread')
-    parser.add_argument('-p', '--public', nargs='?', dest='public')
-
-    # try to parse the arguments, if an exception is thrown it's because some args
-    # are incomplete and we shouldn't return any result until they are
-    try:
-        args = vars(parser.parse_args(query_string.split()))
-    except:
-        raise QueryException()
-
-    if args['value']:
-        return QueryGlobal(' '.join(args['value']))
-
-    name = ' '.join(args['name']) if args['name'] else None
-    url = ' '.join(args['url']) if args['url'] else None
-    desc = ' '.join(args['desc']) if args['desc'] else None
-    tags = args['tags']
-    unread = args['unread']
-    public = args['public']
-
-    return QuerySpecific(name, url, desc, tags, unread, public)
-
 class Query(object):
-    pass
+    @staticmethod
+    def parse_query(query_string):
+        ''' Factory method that parses a query string and return a query
+        subclass instance'''
+        parser = _QueryParser()
+
+        parser.add_argument('value', nargs='*')
+        parser.add_argument('-n', '--name', nargs='+', dest='name')
+        parser.add_argument('-u', '--url', nargs='+', dest='url')
+        parser.add_argument('-d', '--desc', nargs='+', dest='desc')
+        parser.add_argument('-t', '--tags', nargs='+', dest='tags')
+        parser.add_argument('-un', '--unread', nargs='?', dest='unread')
+        parser.add_argument('-p', '--public', nargs='?', dest='public')
+
+        # try to parse the arguments, if an exception is thrown it's because some args
+        # are incomplete and we shouldn't return any result until they are
+        try:
+            args = vars(parser.parse_args(query_string.split()))
+        except:
+            raise QueryException()
+
+        if args['value']:
+            return QueryGlobal(' '.join(args['value']))
+
+        name = _format_string_arg(args, 'name')
+        url = _format_string_arg(args, 'url')
+        desc = _format_string_arg(args, 'desc')
+        tags = args['tags']
+        unread = _format_boolean_arg(args, 'unread')
+        public = _format_boolean_arg(args, 'public')
+
+        return QuerySpecific(name, url, desc, tags, unread, public)
+
+def _format_string_arg(args, key):
+    return ' '.join(args[key]) if args[key] else None
+
+def _format_boolean_arg(args, key):
+    value = args[key]
+    if value:
+        if isinstance(value, basestring):
+            value = value.lower()
+            if value == 'yes' or value == 'true':
+                return 1
+            if value == 'no' or value == 'false':
+                return 0
+        try:
+            num = int(value)
+        except (ValueError, TypeError):
+            pass
+        return 0 if num == 0 else 1
+    return None
 
 class QueryGlobal(Query):
     _value = None
@@ -82,7 +102,6 @@ class QuerySpecific(Query):
     @property
     def public(self):
         return self._public
-
 
 class QueryException(Exception):
     pass
