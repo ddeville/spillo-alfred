@@ -13,7 +13,7 @@ class Query(object):
         parser.add_argument('-d', '--desc', nargs='+', dest='desc')
         parser.add_argument('-t', '--tags', nargs='+', dest='tags')
         parser.add_argument('-un', '--unread', nargs='?', dest='unread')
-        parser.add_argument('-p', '--public', nargs='?', dest='public')
+        parser.add_argument('-pu', '--public', nargs='?', dest='public')
 
         # try to parse the arguments, if an exception is thrown it's because some args
         # are incomplete and we shouldn't return any result until they are

@@ -22,15 +22,17 @@ spl objective-c atomics
 
 If you want more control, you can specify various parameters in your search. The following parameters are supported:
 
-- `-n`: The name of the bookmark
-- `-u`: The URL of the bookmark
-- `-d`: The description of the bookmark
-- `-t`: The tags of the bookmark
+- `-n`/`--name`: The name of the bookmark
+- `-u`/`--url`: The URL of the bookmark
+- `-d`/`--desc`: The description of the bookmark
+- `-t`/`--tags`: The tags of the bookmark
+- `-un`/`--unread`: Whether the bookmark is unread
+- `-pu`/`--public`: Whether the bookmark is public
 
 You can use multiple parameters at the same time.
 
 ```
-spl -n nullability -t objc swift
+spl -n nullability -t objc swift -un 1
 ```
 
 ## Actions
