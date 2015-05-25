@@ -85,8 +85,8 @@
 				<key>script</key>
 				<string>import os, subprocess, sys
 
-script = os.path.join(os.path.dirname(os.path.realpath('__file__')), 'spillo.py')
-output = subprocess.check_output([script, '--service', 'alfred', '--query', "{query}"])
+script = os.path.join(os.path.dirname(os.path.realpath(&apos;__file__&apos;)), &apos;scripts/spillo.py&apos;)
+output = subprocess.check_output([script, &apos;--service&apos;, &apos;alfred&apos;, &apos;--query&apos;, &quot;{query}&quot;])
 
 sys.stdout.write(output)</string>
 				<key>subtext</key>
@@ -134,9 +134,9 @@ sys.stdout.write(output)</string>
 from Foundation import NSURL
 from AppKit import NSWorkspace
 
-default_browser_path = NSWorkspace.sharedWorkspace().URLForApplicationToOpenURL_(NSURL.URLWithString_('http://google.com')).path()
+default_browser_path = NSWorkspace.sharedWorkspace().URLForApplicationToOpenURL_(NSURL.URLWithString_(&apos;http://google.com&apos;)).path()
 
-subprocess.check_output(['open', '-a', default_browser_path, '--background', '{query}'])
+subprocess.check_output([&apos;open&apos;, &apos;-a&apos;, default_browser_path, &apos;--background&apos;, &apos;{query}&apos;])
 </string>
 				<key>type</key>
 				<integer>3</integer>
