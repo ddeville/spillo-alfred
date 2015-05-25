@@ -10,11 +10,6 @@ from Foundation import (
 )
 
 class Database(object):
-    class DatabaseException(Exception):
-        pass
-
-    DatabaseException = DatabaseException
-
     def __init__(self):
         self.connection = sqlite3.connect(self._retrieve_database_path())
 
@@ -26,9 +21,9 @@ class Database(object):
             elif isinstance(query, QuerySpecific):
                 return self._query_specific(cursor, query)
             else:
-                raise Database.DatabaseException('Unexpected query type')
+                raise DatabaseException('Unexpected query type')
         except sqlite3.OperationalError:
-            raise Database.DatabaseException('There was an unknown error while querying the database')
+            raise DatabaseException('There was an unknown error while querying the database')
 
     def _retrieve_database_path(self):
         path = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, True).firstObject()
@@ -125,3 +120,6 @@ class Database(object):
         for row in cursor:
             bookmarks.append(Bookmark(title=row[0], url=row[1], identifier=row[2], date=row[3]))
         return bookmarks
+
+class DatabaseException(Exception):
+    pass

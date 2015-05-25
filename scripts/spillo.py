@@ -6,7 +6,7 @@ from service.alfred import AlfredEmitter
 from service.cli import CLIEmitter
 
 from spillo.bookmark import Bookmark
-from spillo.database import Database
+from spillo.database import Database, DatabaseException
 from spillo.query import Query, QueryException
 
 def main(argv):
@@ -43,7 +43,7 @@ def main(argv):
         output = emitter.generate_output(database.query(query))
     except IOError:
         output = emitter.generate_error('Cannot find Spillo database, make sure that Spillo is installed')
-    except Database.DatabaseException:
+    except DatabaseException:
         output = emitter.generate_error('There was an unknown error while querying the database')
 
     _emit(output)
