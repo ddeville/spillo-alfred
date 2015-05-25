@@ -64,7 +64,7 @@ class Database(object):
         if query.tags:
             tag_queries = []
             for tag in query.tags:
-                tag_queries.append('SELECT ZTITLE, ZURL, ZIDENTIFIER, ZDATE FROM ZPINBOARDPOST WHERE Z_PK IN (SELECT Z_2POSTS FROM Z_2TAGS WHERE Z_3TAGS IN  (SELECT Z_PK FROM ZPINBOARDTAG WHERE ZTITLE == \"'+tag+'\" COLLATE NOCASE))')
+                tag_queries.append('SELECT ZTITLE, ZURL, ZIDENTIFIER, ZDATE FROM ZPINBOARDPOST WHERE Z_PK IN (SELECT Z_2POSTS FROM Z_2TAGS WHERE Z_3TAGS == (SELECT Z_PK FROM ZPINBOARDTAG WHERE ZTITLE == \"'+tag+'\" COLLATE NOCASE))')
             queries.append(' INTERSECT '.join(tag_queries))
 
         sql = ' INTERSECT '.join(queries) + ' ORDER BY ZDATE DESC'
