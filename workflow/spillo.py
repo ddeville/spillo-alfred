@@ -100,25 +100,25 @@ class SpilloDatabase(object):
 
     def _query_general(self, cursor, query):
         params = {"t": '%'+query+'%'}
-        cursor.execute('SELECT ZTITLE, ZURL, ZIDENTIFIER, ZDATE FROM ZPINBOARDPOST WHERE ZDELETING=0 AND (ZTITLE LIKE :t OR ZURL LIKE :t) ORDER BY ZDATE DESC', params)
+        cursor.execute('SELECT ZTITLE, ZURL, ZIDENTIFIER, ZDATE FROM ZPINBOARDPOST WHERE ZDELETING=0 AND (ZTITLE LIKE :t OR ZURL LIKE :t) COLLATE NOCASE ORDER BY ZDATE DESC', params)
         return cursor.fetchall()
 
     def _query_specific(self, cursor, query):
         queries = []
         params = {}
         if query.name:
-            queries.append('SELECT ZTITLE, ZURL, ZIDENTIFIER, ZDATE FROM ZPINBOARDPOST WHERE ZDELETING=0 AND ZTITLE LIKE :t')
+            queries.append('SELECT ZTITLE, ZURL, ZIDENTIFIER, ZDATE FROM ZPINBOARDPOST WHERE ZDELETING=0 AND ZTITLE LIKE :t COLLATE NOCASE')
             params["t"] = '%'+query.name+'%'
         if query.url:
-            queries.append('SELECT ZTITLE, ZURL, ZIDENTIFIER, ZDATE FROM ZPINBOARDPOST WHERE ZDELETING=0 AND ZURL LIKE :u')
+            queries.append('SELECT ZTITLE, ZURL, ZIDENTIFIER, ZDATE FROM ZPINBOARDPOST WHERE ZDELETING=0 AND ZURL LIKE :u COLLATE NOCASE')
             params["u"] = '%'+query.url+'%'
         if query.desc:
-            queries.append('SELECT ZTITLE, ZURL, ZIDENTIFIER, ZDATE FROM ZPINBOARDPOST WHERE ZDELETING=0 AND ZDESC LIKE :d')
+            queries.append('SELECT ZTITLE, ZURL, ZIDENTIFIER, ZDATE FROM ZPINBOARDPOST WHERE ZDELETING=0 AND ZDESC LIKE :d COLLATE NOCASE')
             params["d"] = '%'+query.desc+'%'
         if query.tags:
             tag_queries = []
             for tag in query.tags:
-                tag_queries.append('SELECT ZTITLE, ZURL, ZIDENTIFIER, ZDATE FROM ZPINBOARDPOST WHERE Z_PK IN (SELECT Z_2POSTS FROM Z_2TAGS WHERE Z_3TAGS IN  (SELECT Z_PK FROM ZPINBOARDTAG WHERE ZTITLE == \"'+tag+'\"))')
+                tag_queries.append('SELECT ZTITLE, ZURL, ZIDENTIFIER, ZDATE FROM ZPINBOARDPOST WHERE Z_PK IN (SELECT Z_2POSTS FROM Z_2TAGS WHERE Z_3TAGS IN  (SELECT Z_PK FROM ZPINBOARDTAG WHERE ZTITLE == \"'+tag+'\" COLLATE NOCASE))')
             queries.append(' INTERSECT '.join(tag_queries))
 
         sql = ' INTERSECT '.join(queries) + ' ORDER BY ZDATE DESC'
