@@ -23,7 +23,7 @@ class Query(object):
             raise QueryException()
 
         if args['value']:
-            return QueryGlobal(' '.join(args['value']))
+            return QueryGlobal(_format_string_arg(args, 'value'))
 
         name = _format_string_arg(args, 'name')
         url = _format_string_arg(args, 'url')
