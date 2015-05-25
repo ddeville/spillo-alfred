@@ -47,10 +47,9 @@ def _format_boolean_arg(args, key):
             if value == 'no' or value == 'false':
                 return 0
         try:
-            num = int(value)
+            return 0 if int(value) == 0 else 1
         except (ValueError, TypeError):
             pass
-        return 0 if num == 0 else 1
     return None
 
 class QueryGlobal(Query):
