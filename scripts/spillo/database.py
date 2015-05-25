@@ -105,11 +105,11 @@ class Database(object):
                 params.append(tag)
             queries.append(' INTERSECT '.join(tag_queries))
 
-        if query.unread is not None:
+        if query.unread is not None: # check for None specifically since it can be 0
             queries.append(Database.UNREAD_QUERY)
             params.append(query.unread)
 
-        if query.public is not None:
+        if query.public is not None: # check for None specifically since it can be 0
             queries.append(Database.PUBLIC_QUERY)
             params.append(query.public)
 
