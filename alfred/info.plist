@@ -35,6 +35,33 @@
 				<string></string>
 			</dict>
 		</array>
+		<key>BB06C0C1-DFC1-4B57-9C0F-E56ED87BC903</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>0EB96C1E-0FCD-4072-BA49-18885F489BE2</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>DA1739EB-62FF-4F27-BA0E-1BFBDC136AC2</string>
+				<key>modifiers</key>
+				<integer>1048576</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>47697E2F-6FD5-4B01-8C78-E2E1E5596CAE</string>
+				<key>modifiers</key>
+				<integer>524288</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+			</dict>
+		</array>
 	</dict>
 	<key>createdby</key>
 	<string>Bananafish Software</string>
@@ -85,8 +112,8 @@
 				<key>script</key>
 				<string>import os, subprocess, sys
 
-script = os.path.join(os.path.dirname(os.path.realpath(&apos;__file__&apos;)), &apos;scripts/spillo.py&apos;)
-output = subprocess.check_output([script, &apos;--service&apos;, &apos;alfred&apos;, &apos;--query&apos;, &quot;{query}&quot;])
+script = os.path.join(os.path.dirname(os.path.realpath('__file__')), 'scripts/spillo.py')
+output = subprocess.check_output([script, '--service', 'alfred', '--query', "{query}"])
 
 sys.stdout.write(output)</string>
 				<key>subtext</key>
@@ -125,6 +152,48 @@ sys.stdout.write(output)</string>
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>argumenttype</key>
+				<integer>2</integer>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>keyword</key>
+				<string>splunread</string>
+				<key>queuedelaycustom</key>
+				<integer>3</integer>
+				<key>queuedelayimmediatelyinitially</key>
+				<true/>
+				<key>queuedelaymode</key>
+				<integer>0</integer>
+				<key>queuemode</key>
+				<integer>1</integer>
+				<key>runningsubtext</key>
+				<string>Please wait, currently searching in Spillo…</string>
+				<key>script</key>
+				<string>import os, subprocess, sys
+
+script = os.path.join(os.path.dirname(os.path.realpath('__file__')), 'scripts/spillo.py')
+output = subprocess.check_output([script, '--service', 'alfred', '--query', "-un 1"])
+
+sys.stdout.write(output)</string>
+				<key>subtext</key>
+				<string>View a list of unread bookmarks in Spillo</string>
+				<key>title</key>
+				<string>View Unread in Spillo</string>
+				<key>type</key>
+				<integer>3</integer>
+				<key>withspace</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.scriptfilter</string>
+			<key>uid</key>
+			<string>BB06C0C1-DFC1-4B57-9C0F-E56ED87BC903</string>
+			<key>version</key>
+			<integer>0</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>concurrently</key>
 				<false/>
 				<key>escaping</key>
@@ -134,9 +203,9 @@ sys.stdout.write(output)</string>
 from Foundation import NSURL
 from AppKit import NSWorkspace
 
-default_browser_path = NSWorkspace.sharedWorkspace().URLForApplicationToOpenURL_(NSURL.URLWithString_(&apos;http://google.com&apos;)).path()
+default_browser_path = NSWorkspace.sharedWorkspace().URLForApplicationToOpenURL_(NSURL.URLWithString_('http://google.com')).path()
 
-subprocess.check_output([&apos;open&apos;, &apos;-a&apos;, default_browser_path, &apos;--background&apos;, &apos;{query}&apos;])
+subprocess.check_output(['open', '-a', default_browser_path, '--background', '{query}'])
 </string>
 				<key>type</key>
 				<integer>3</integer>
@@ -161,17 +230,22 @@ subprocess.check_output([&apos;open&apos;, &apos;-a&apos;, default_browser_path,
 		<key>47697E2F-6FD5-4B01-8C78-E2E1E5596CAE</key>
 		<dict>
 			<key>ypos</key>
-			<real>250</real>
+			<real>280</real>
 		</dict>
 		<key>6C68D0BB-A89A-4FDD-BB99-B5A5B460646E</key>
 		<dict>
 			<key>ypos</key>
-			<real>60</real>
+			<real>80</real>
+		</dict>
+		<key>BB06C0C1-DFC1-4B57-9C0F-E56ED87BC903</key>
+		<dict>
+			<key>ypos</key>
+			<real>190</real>
 		</dict>
 		<key>DA1739EB-62FF-4F27-BA0E-1BFBDC136AC2</key>
 		<dict>
 			<key>ypos</key>
-			<real>130</real>
+			<real>140</real>
 		</dict>
 	</dict>
 	<key>webaddress</key>
