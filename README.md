@@ -12,7 +12,7 @@ You can search in two different ways:
 
 ### Global
 
-Just type some text after the `spl` command and Spillo will search against the title, URL and description of your bookmarks. Simple.
+Just type some text after the `spl` command and Spillo will search against the title, URL, description and tags of your bookmarks. Simple.
 
 ```
 spl objective-c atomics
@@ -22,12 +22,12 @@ spl objective-c atomics
 
 If you want more control, you can specify various parameters in your search. The following parameters are supported:
 
-- `-n`/`--name`: The name of the bookmark
-- `-u`/`--url`: The URL of the bookmark
-- `-d`/`--desc`: The description of the bookmark
-- `-t`/`--tags`: The tags of the bookmark
-- `-un`/`--unread`: Whether the bookmark is unread
-- `-pu`/`--public`: Whether the bookmark is public
+- `-n`/`--name`: The name of the bookmark (text)
+- `-u`/`--url`: The URL of the bookmark (text)
+- `-d`/`--desc`: The description of the bookmark (text)
+- `-t`/`--tags`: The tags of the bookmark (text, separated by space)
+- `-un`/`--unread`: Whether the bookmark is unread (`1` or `0`, `true` or `false`, `yes` or `no`)
+- `-pu`/`--public`: Whether the bookmark is public (`1` or `0`, `true` or `false`, `yes` or `no`)
 
 You can use multiple parameters at the same time.
 
