@@ -3,7 +3,7 @@ import argparse, sys
 class Query(object):
     @staticmethod
     def parse_query(query_string):
-        ''' Factory method that parses a query string and return a query
+        ''' Factory method that parses a query string and returns a query
         subclass instance'''
         parser = _QueryParser()
 
