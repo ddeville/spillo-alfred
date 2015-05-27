@@ -15,6 +15,12 @@ class Query(object):
         parser.add_argument('-un', '--unread', nargs='?', dest='unread')
         parser.add_argument('-pu', '--public', nargs='?', dest='public')
 
+        # make sure that the unicode query string is decoded
+        try:
+            query_string = query_string.decode('utf-8')
+        except UnicodeDecodeError:
+            pass
+
         # try to parse the arguments, if an exception is thrown it's because some args
         # are incomplete and we shouldn't return any result until they are
         try:
