@@ -35,6 +35,14 @@ You can use multiple parameters at the same time.
 spl -n nullability -t objc swift -un 1
 ```
 
+#### Unread
+
+You can also see a list of your unread bookmarks by using the `splunread` command in Alfred.
+
+## Hotkeys
+
+The workflow has some hotkeys setup that you can use to start a search of view your unread bookmarks. These hotkeys are left blank by default but you can easily set them up by editing them in the workflow.
+
 ## Actions
 
 When you have found the bookmark you are looking for, you can open it in your default browser. Just hit Return or click on the bookmark in the Alfred search results.
