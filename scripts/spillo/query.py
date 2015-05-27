@@ -1,4 +1,4 @@
-import argparse, sys
+import argparse, sys, unicodedata
 
 class Query(object):
     @staticmethod
@@ -17,7 +17,7 @@ class Query(object):
 
         # make sure that the unicode query string is decoded
         try:
-            query_string = query_string.decode('utf-8')
+            query_string = unicodedata.normalize('NFC', query_string.decode('utf-8'))
         except UnicodeDecodeError:
             pass
 
