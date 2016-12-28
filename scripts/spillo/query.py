@@ -1,10 +1,13 @@
-import argparse, sys, unicodedata
+import argparse
+import sys
+import unicodedata
+
 
 class Query(object):
     @staticmethod
     def parse_query(query_string):
-        ''' Factory method that parses a query string and returns a query
-        subclass instance'''
+        """Factory method that parses a query string and returns a query
+        subclass instance."""
         parser = _QueryParser()
 
         parser.add_argument('value', nargs='*')
@@ -40,8 +43,10 @@ class Query(object):
 
         return QuerySpecific(name, url, desc, tags, unread, public)
 
+
 def _format_string_arg(args, key):
     return ' '.join(args[key]) if args[key] else None
+
 
 def _format_boolean_arg(args, key):
     value = args[key]
@@ -58,6 +63,7 @@ def _format_boolean_arg(args, key):
             pass
     return None
 
+
 class QueryGlobal(Query):
     _value = None
 
@@ -67,6 +73,7 @@ class QueryGlobal(Query):
     @property
     def value(self):
         return self._value
+
 
 class QuerySpecific(Query):
     _name = None
@@ -108,8 +115,10 @@ class QuerySpecific(Query):
     def public(self):
         return self._public
 
+
 class QueryException(Exception):
     pass
+
 
 class _QueryParser(argparse.ArgumentParser):
     def _get_action_from_name(self, name):
@@ -129,4 +138,4 @@ class _QueryParser(argparse.ArgumentParser):
         if exc:
             exc.argument = self._get_action_from_name(exc.argument_name)
             raise exc
-        super(QueryParser, self).error(message)
+        super(_QueryParser, self).error(message)

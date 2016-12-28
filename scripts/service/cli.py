@@ -1,5 +1,6 @@
 from spillo.emitter import Emitter
 
+
 class CLIEmitter(Emitter):
     def generate_output(self, bookmarks):
         if not bookmarks:

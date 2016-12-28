@@ -1,6 +1,10 @@
-import os, sqlite3
+import os
+import sqlite3
 
-from query import QueryGlobal, QuerySpecific
+from query import (
+    QueryGlobal,
+    QuerySpecific,
+)
 from bookmark import Bookmark
 
 from Foundation import (
@@ -9,9 +13,10 @@ from Foundation import (
     NSUserDomainMask,
 )
 
+
 class Database(object):
-    def __init__(self):
-        self.connection = sqlite3.connect(self._retrieve_database_path())
+    def __init__(self, account_identifier):
+        self.connection = sqlite3.connect(self._retrieve_database_path(account_identifier))
 
     def query(self, query):
         try:
@@ -25,22 +30,6 @@ class Database(object):
         except sqlite3.OperationalError:
             raise DatabaseException('There was an unknown error while querying the database')
 
-    def _retrieve_database_path(self):
-        path = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, True).firstObject()
-        path = os.path.join(path,
-            'Group Containers',
-            'Q8B696Y8U4.com.ddeville.spillo',
-            'Library',
-            'Application Support',
-            'Stores',
-            'Pinboard',
-            'Pinboard.sqlite'
-        )
-        # attempt to open the file so that we throw if it doesn't exist
-        with open(path) as f:
-            pass
-        return path
-
     # the name or url or desc is like the search term or the tag is exactly the search term
     GLOBAL_QUERY = 'SELECT ZTITLE, ZURL, ZIDENTIFIER, ZDATE FROM ZPINBOARDPOST WHERE ZDELETING=0 AND \
                     ZTITLE LIKE ? OR ZURL LIKE ? OR ZDESC LIKE ? OR Z_PK IN \
@@ -53,10 +42,10 @@ class Database(object):
         params = []
         for word in query.value.split():
             queries.append(Database.GLOBAL_QUERY)
-            params.append('%'+word+'%') # name
-            params.append('%'+word+'%') # url
-            params.append('%'+word+'%') # desc
-            params.append(word)         # tag
+            params.append('%' + word + '%')  # name
+            params.append('%' + word + '%')  # url
+            params.append('%' + word + '%')  # desc
+            params.append(word)  # tag
 
         if not queries:
             return None
@@ -84,11 +73,11 @@ class Database(object):
         queries = []
         params = []
 
-        def create_and_add_query(sql, term):
+        def create_and_add_query(sql_query, term):
             # construct a query for each word in the search term
             for word in term.split():
-                queries.append(sql)
-                params.append('%'+term+'%')
+                queries.append(sql_query)
+                params.append('%' + word + '%')
 
         if query.name:
             create_and_add_query(Database.NAME_QUERY, query.name)
@@ -105,11 +94,11 @@ class Database(object):
                 params.append(tag)
             queries.append(' INTERSECT '.join(tag_queries))
 
-        if query.unread is not None: # check for None specifically since it can be 0
+        if query.unread is not None:  # check for None specifically since it can be 0
             queries.append(Database.UNREAD_QUERY)
             params.append(query.unread)
 
-        if query.public is not None: # check for None specifically since it can be 0
+        if query.public is not None:  # check for None specifically since it can be 0
             queries.append(Database.PUBLIC_QUERY)
             params.append(query.public)
 
@@ -120,11 +109,31 @@ class Database(object):
         cursor.execute(sql, params)
         return self._generate_bookmarks(cursor)
 
-    def _generate_bookmarks(self, cursor):
+    @staticmethod
+    def _retrieve_database_path(account_identifier):
+        path = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, True).firstObject()
+        path = os.path.join(path,
+                            'Group Containers',
+                            'Q8B696Y8U4.com.ddeville.spillo',
+                            'Library',
+                            'Application Support',
+                            'Stores',
+                            account_identifier,
+                            'Core',
+                            'Pinboard.sqlite'
+                            )
+        # attempt to open the file so that we throw if it doesn't exist
+        with open(path):
+            pass
+        return path
+
+    @staticmethod
+    def _generate_bookmarks(cursor):
         bookmarks = []
         for row in cursor:
             bookmarks.append(Bookmark(title=row[0], url=row[1], identifier=row[2], date=row[3]))
         return bookmarks
+
 
 class DatabaseException(Exception):
     pass
